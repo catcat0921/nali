@@ -9,10 +9,16 @@ import (
 	"regexp"
 	"strings"
 
-	"gopkg.in/yaml.v2"
-
+	"github.com/zu1k/nali/pkg/download"
 	"github.com/zu1k/nali/pkg/re"
+	"gopkg.in/yaml.v2"
 )
+
+var DownloadUrls = []string{
+	"https://cdn.jsdelivr.net/gh/4ft35t/cdn/src/cdn.yml",
+	"https://raw.githubusercontent.com/4ft35t/cdn/master/src/cdn.yml",
+	"https://raw.githubusercontent.com/SukkaLab/cdn/master/src/cdn.yml",
+}
 
 type CDN struct {
 	Map   map[string]CDNResult
@@ -38,7 +44,7 @@ func NewCDN(filePath string) (*CDN, error) {
 	_, err := os.Stat(filePath)
 	if err != nil && os.IsNotExist(err) {
 		log.Println("文件不存在，尝试从网络获取最新CDN数据库")
-		fileData, err = Download(filePath)
+		fileData, err = download.Download(filePath, DownloadUrls...)
 		if err != nil {
 			return nil, err
 		}
